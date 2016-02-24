@@ -1,0 +1,3 @@
+ find ./ -name "*.php" |xargs egrep "feng007|phpspy|c99sh|milw0rm|eval\(gunerpress|eval\(base64_decoolcode|spider_bc">/tmp/php.txt
+
+find . -name "*.php" |xargs egrep "create_function"

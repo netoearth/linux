@@ -1,0 +1,32 @@
+ fdisk -S 56 /dev/xvdb
+     mkfs.ext3 /dev/xvdb1
+     echo '/dev/xvdb1  /data ext3    defaults    0  0' >> /etc/fstab
+mount -a    
+mkdir -p /data/admin.live.uuu9.com
+mkdir -p /data/live.uuu9.com
+  
+     df -h
+     yum install libcurl libcurl-devel openssl-devel fuse fuse-libs fuse-devel libxml2-devel libunwind-devel screen rsync sysstat nfs* -y
+   vi /etc/rsyncd.conf
+ echo rsyncclient:P52f17dm440bso4z >/etc/rsyncd.secrets
+   chmod 600 /etc/rsyncd.secrets
+/usr/bin/rsync --daemon
+scp 10.172.183.24:/opt/lnmp1.2-full.tar.gz /opt
+ cd /opt/
+  tar xvf lnmp1.2-full.tar.gz 
+cd lnmp1.2-full
+
+ ./install.sh lnmp
+
+lh$uuu9*&
+
+ 
+    ./addons.sh install eaccelerator
+  ./addons.sh install memcached
+  ./addons.sh install redis
+  /usr/local/php/bin/php -m
+
+/etc/init.d/mysql stop
+/etc/init.d/memcached stop
+/etc/init.d/redis stop
+

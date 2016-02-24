@@ -1,0 +1,69 @@
+vsftpd虚拟用户
+准备工作
+
+$ yum install vsftpd db4-utils
+ 
+#添加虚拟用户,用户名和密码各占一行
+$ vim /etc/vsftpd/virtual_user
+user1
+password1
+user2
+password2
+ 
+#生成虚拟用户口令认证文件
+$ db_load -T -t hash -f /etc/vsftpd/virtual_user /etc/vsftpd/virtual_user.db
+ 
+#生成pam认证文件
+$ mv /etc/pam.d/vsftpd /etc/pam.d/vsftpd.bak
+$ vim /etc/pam.d/vsftpd    #写入如下两行,如果是32位系统,把lib64改为lib
+auth    required    /lib64/security/pam_userdb.so    db=/etc/vsftpd/virtual_user
+account    required    /lib64/security/pam_userdb.so    db=/etc/vsftpd/virtual_user
+
+修改vsftp配置文件
+
+$ cp /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.ori
+$ vim /etc/vsftpd/vsftpd.conf
+ 
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+dirmessage_enable=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+xferlog_std_format=YES
+idle_session_timeout=600
+data_connection_timeout=120
+listen=YES
+pam_service_name=vsftpd
+ 
+#开启userlist,并禁止user_list文件中的用户登陆
+userlist_enable=YES
+userlist_deny=YES
+userlist_file=/etc/vsftpd/user_list
+ 
+tcp_wrappers=YES
+ 
+#虚拟用户的配置文件目录
+user_config_dir=/etc/vsftpd/virtual_conf
+建立虚拟用户的配置文件，将虚拟用户映射为本地用户www，每一行首尾都不能有空格，否则会报错
+
+$ vim /etc/vsftpd/virtual_conf/user1  #这里的文件名必须跟虚拟用户名一样
+guest_enable=yes
+guest_username=www
+anon_umask=022
+local_root=/home/wwwroot/dir1/
+#可以浏览和下载,yes只读
+anon_world_readable_only=NO
+#可以上传(全局控制)
+write_enable=YES
+#允许创建目录
+anon_mkdir_write_enable=YES
+#允许删除
+anon_other_write_enable=YES
+#允许上传
+anon_upload_enable=YES
+一些说明：
+1，本文将所有的虚拟用户映射成了本地用户www，请确保www的工作目录（/home/www）存在，因为vsftp登陆时是会首先进入/home/www，最后进入local_root指定的目录；
+2，www用户需要同时对/home/www目录和local_root指定的目录有读写权限；
+3，新版vsftp禁止用户读写根目录，因此使用FTP客户端登陆以后会发现其不能在根目录创建目录，这是正常的。
