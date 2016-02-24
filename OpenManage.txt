@@ -1,0 +1,36 @@
+scp 192.168.29.21:/opt/1/*.gz /opt
+tar zxvf /opt/OM-SrvAdmin-Dell-Web-LX-7.4.0-866_A00.tar.gz
+
+ yum install pciutils libcmpiCppImpl0.x86_64 openwsman-server sblim-sfcb sblim-sfcc libwsman1.x86_64  libwsman-devel.x86_64 openwsman-client libxslt libxslt-devel.x86_64 -y
+
+vi /etc/redhat-release
+
+CentOS release 6.4 (Final Santiago)
+
+RHEL 3 Taroon
+RHEL 4 Nahant
+RHEL 5 Tikanga
+RHEL 6 Santiago
+
+
+chmod +x ./setup.sh
+./setup.sh
+
+选择1 2 6
+i安装
+/sbin/ldconfig
+/opt/dell/srvadmin/sbin/srvadmin-services.sh start
+
+
+chkconfig自動起動設定
+
+/sbin/chkconfig dsm_sa_ipmi on
+/sbin/chkconfig dsm_om_connsvc on
+/sbin/chkconfig dsm_om_shrsvc on
+
+
+WEB管理画面
+
+https://IP:1311
+
+
