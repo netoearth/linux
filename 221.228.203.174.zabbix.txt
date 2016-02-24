@@ -1,0 +1,61 @@
+221.228.203.174 zabbix部署
+
+http://linux.cn/blog-16475-5873.html
+
+1、yum install -y gcc mysql-devel net-snmp-devel wget net-snmp-utils php-gd php-mysqlphp-common php-bcmath php-mbstring php-xml curl-devel iksemel* OpenIPMI OpenIPMI-devel fping libssh2 libssh2-devel unixODBC unixODBC-devel mysql-connector-odbc openldap openldap-devel java java-devel gcc-c++ autoconf     libdbi-dbd-mysql   curl-devel unixODBC-devel 
+
+2、安装lnmp
+lnmp status manage: /root/lnmp {start|stop|reload|restart|kill|status}
+default mysql root password:]nrp6P36M2OU[yl+
+phpinfo : http://yourIP/phpinfo.php
+phpMyAdmin : http://yourIP/phpmyadmin/
+Prober : http://yourIP/p.php
+Add VirtualHost : /root/vhost.sh
+
+The path of some dirs:
+mysql dir:   /usr/local/mysql
+php dir:     /usr/local/php
+nginx dir:   /usr/local/nginx
+web dir :     /home/wwwroot/default
+
+
+
+
+3、安装客户端
+cd /opt
+groupadd zabbix
+useradd -g zabbix zabbix
+
+wget http://192.168.29.21/zabbix-2.4.2.tar.gz
+tar -zxvf zabbix-2.4.2.tar.gz
+cd zabbix-2.4.2
+./configure --prefix=/usr --sysconfdir=/etc/zabbix --enable-agent
+make install
+
+
+mkdir /var/log/zabbix
+chown zabbix.zabbix /var/log/zabbix
+cp misc/init.d/fedora/core/zabbix_agentd /etc/init.d/
+chmod 755 /etc/init.d/zabbix_agentd
+sed -i "s#BASEDIR=/usr/local#BASEDIR=/usr/#g" /etc/init.d/zabbix_agentd
+chkconfig zabbix_agentd on
+
+cd /etc/zabbix
+rm -rf /etc/zabbix/zabbix_agentd.conf
+wget http://192.168.29.21/zabbix_agentd.conf
+
+iptables -A INPUT -p tcp -m tcp --dport 10050 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 10051 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 10050 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 10051 -j ACCEPT
+
+service zabbix_agentd start
+
+
+
+4、排错
+
+Starting zabbix_agentd: /usr/local/zabbix/sbin/zabbix_agentd: error while loading shared libraries: libiconv.so.2: cannot open shared object file: No such fileor directory
+用下面方法解决：
+# echo /usr/local/lib/ >> /etc/ld.so.conf
+# ldconfig
