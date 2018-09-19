@@ -1,10 +1,10 @@
 #!/bin/bash
 
-max=300   #我们设定的最大值，当访问量大于这个值得时候，封锁
+max=10000   #我们设定的最大值，当访问量大于这个值得时候，封锁
 
 logdir=/data/logs/www.xiaohulu.com/access.log   #nginx封锁配置文件路径
 
-tail -10000 $logdir|awk '{print $1}'|sort|uniq -c|sort -rn|while read line  #截取IP段
+cat $logdir|awk '{print $1}'|sort|uniq -c|sort -rn|while read line  #截取IP段
 
 do
 
