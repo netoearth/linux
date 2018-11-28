@@ -1,0 +1,1 @@
+FOR /R %a IN (*.jpg) DO convert -resize 80% "%~a" "%~dpna.jpg"
